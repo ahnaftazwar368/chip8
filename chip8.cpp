@@ -3,9 +3,11 @@
 #include <algorithm>
 #include "chip8.h"
 
-// Initialise the entire chip8 system by loading the first ROM instruction
+// Initialise the entire Chip8 system by loading the first ROM instruction
 // stored at 0x200
-chip8::chip8() : pc(ROMSTART), sp(0) {
+Chip8::Chip8() {
+    pc = ROMSTART;
+    sp = 0;
     uint8_t fontset[80] ={
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -30,14 +32,15 @@ chip8::chip8() : pc(ROMSTART), sp(0) {
 }
 
 // Load the ROM file into the memory for use 
-void chip8::loadRom(const char* romFile) {
+void Chip8::loadRom(const char* romFile) {
     std::ifstream file(romFile, std::ios::binary);
 
+    char* buffer{};
     if (file.is_open()) {
         // find the size of the current file and create a buffer for the value
         file.seekg(0, file.end);
         int fileSize = file.tellg();
-        char *buffer = new char[fileSize];
+        buffer = new char[fileSize];
 
         // rewind the file and then copy all contents to buffer
         file.seekg(0, file.beg);
@@ -46,7 +49,7 @@ void chip8::loadRom(const char* romFile) {
 
         // load buffer to memory (starting from 0x200)
         for (int i = 0; i < fileSize; i++) {
-            chip8::memory[ROMSTART + i] = buffer[i];
+            Chip8::memory[ROMSTART + i] = buffer[i];
         }
     }
 
@@ -54,22 +57,22 @@ void chip8::loadRom(const char* romFile) {
 }
 
 // Random num generator
-int chip8::giveRandInt() {
+int Chip8::giveRandInt() {
     std::srand((unsigned) time(NULL));
     return rand() % 256;
 }
 
 // All Opcodes
-void chip8::Ox00E0() {
+void Chip8::Ox00E0() {
     std::fill(display, display + (64*32), 0);
 }
 
-void chip8::Ox00EE() {
+void Chip8::Ox00EE() {
     sp--;
     pc = stack[sp];
 }
 
-void chip8::Ox1NNN() {
+void Chip8::Ox1NNN() {
     // Opcode is made of 16 bits, 4 of which are used to give instruction of
     // which exact instruction is being called while the following 12 bits
     // give any operands that are contained in the opcode. Hence the bitwise
@@ -78,14 +81,14 @@ void chip8::Ox1NNN() {
     pc = address;
 }
 
-void chip8::Ox2NNN() {
+void Chip8::Ox2NNN() {
     uint16_t address = opcode & 0x0FFF;
     stack[sp] = pc;
     sp++;
     pc = address;
 }
 
-void chip8::Ox3XKK() {
+void Chip8::Ox3XKK() {
     uint16_t targetRego = (opcode & 0x0F00) >> 8;
     uint8_t targetValue = opcode & 0x00FF;
 
@@ -94,7 +97,7 @@ void chip8::Ox3XKK() {
     }
 }
 
-void chip8::Ox4XKK() {
+void Chip8::Ox4XKK() {
     uint16_t targetRego = (opcode & 0x0F00) >> 8;
     uint8_t targetValue = opcode & 0x00FF;
 
@@ -103,7 +106,7 @@ void chip8::Ox4XKK() {
     }
 }
 
-void chip8::Ox5XY0() {
+void Chip8::Ox5XY0() {
     uint16_t targetRegoX = (opcode & 0x0F00) >> 8;
     uint16_t targetRegoY = (opcode & 0x00F0) >> 4;
 
@@ -112,140 +115,200 @@ void chip8::Ox5XY0() {
     }
 }
 
-void chip8::Ox6XKK() {
+void Chip8::Ox6XKK() {
     uint16_t targetRego = (opcode & 0x0F00) >> 8;
     uint8_t targetValue = (opcode & 0x00FF);
 
     registers[targetRego] = targetValue;
 }
 
-void chip8::Ox7XKK() {
+void Chip8::Ox7XKK() {
     uint16_t targetRego = (opcode & 0x0F00) >> 8;
     uint8_t targetValue = (opcode & 0x00FF);
 
     registers[targetRego] += targetValue;
 }
 
-void chip8::Ox8XY0() {
+void Chip8::Ox8XY0() {
     uint16_t targetRegoX = (opcode & 0x0F00) >> 8;
     uint16_t targetRegoY = (opcode & 0x00F0) >> 4;
 
     registers[targetRegoX] = registers[targetRegoY];
 }
 
-void chip8::Ox8XY1() {
+void Chip8::Ox8XY1() {
     uint16_t targetRegoX = (opcode & 0x0F00) >> 8;
     uint16_t targetRegoY = (opcode & 0x00F0) >> 4;
 
     registers[targetRegoX] = registers[targetRegoX] | registers[targetRegoY];
 }
 
-void chip8::Ox8XY2() {
+void Chip8::Ox8XY2() {
     uint16_t targetRegoX = (opcode & 0x0F00) >> 8;
     uint16_t targetRegoY = (opcode & 0x00F0) >> 4;
 
     registers[targetRegoX] = registers[targetRegoX] & registers[targetRegoY];
 }
 
-void chip8::Ox8XY3() {
+void Chip8::Ox8XY3() {
     uint16_t targetRegoX = (opcode & 0x0F00) >> 8;
     uint16_t targetRegoY = (opcode & 0x00F0) >> 4;
 
     registers[targetRegoX] = registers[targetRegoX] ^ registers[targetRegoY];
 }
 
-void chip8::Ox8XY4() {
+void Chip8::Ox8XY4() {
     uint16_t targetRegoX = (opcode & 0x0F00) >> 8;
     uint16_t targetRegoY = (opcode & 0x00F0) >> 4;
 
     int sum = registers[targetRegoX] + registers[targetRegoY];
 
-    registers[FLAGREGISTER] = sum > 255 ? 1 : 0;
+    registers[FLAGREGO] = sum > 255 ? 1 : 0;
 
     registers[targetRegoX] = sum & 0x00FF;
 }
 
-void chip8::Ox8XY5() {
+void Chip8::Ox8XY5() {
     uint16_t targetRegoX = (opcode & 0x0F00) >> 8;
     uint16_t targetRegoY = (opcode & 0x00F0) >> 4;
 
     int diff = registers[targetRegoX] - registers[targetRegoY];
 
-    registers[FLAGREGISTER] = diff > 0 ? 1 : 0;
+    registers[FLAGREGO] = diff > 0 ? 1 : 0;
 
     registers[targetRegoX] = diff;
 }
 
-void chip8::Ox8XY6() {
+void Chip8::Ox8XY6() {
     uint16_t targetRego = (opcode & 0x0F00) >> 8;
 
     if (registers[targetRego] & 0x0001) {
-        registers[FLAGREGISTER] = 1;
+        registers[FLAGREGO] = 1;
     } else {
-        registers[FLAGREGISTER] = 0;
+        registers[FLAGREGO] = 0;
         registers[targetRego] /= 2;
     }
 }
 
-void chip8::Ox8XY7() {
+void Chip8::Ox8XY7() {
     uint16_t targetRegoX = (opcode & 0x0F00) >> 8;
     uint16_t targetRegoY = (opcode & 0x00F0) >> 4;
 
     int diff = registers[targetRegoX] - registers[targetRegoY];
 
-    registers[FLAGREGISTER] = diff < 0 ? 1 : 0;
+    registers[FLAGREGO] = diff < 0 ? 1 : 0;
 
     registers[targetRegoX] = registers[targetRegoY] - registers[targetRegoX];
 }
 
-void chip8::Ox8XYE() {
-    
+void Chip8::Ox8XYE() {
+    uint16_t targetRego = (opcode & 0x0F00) >> 8;
+
+    registers[FLAGREGO] = registers[targetRego] & 0x8000 ? 1 : 0;
+
+    registers[targetRego] *= 2;
 }
-void chip8::Ox9XY0() {
-    
+
+void Chip8::Ox9XY0() {
+    uint16_t targetRegoX = (opcode & 0x0F00) >> 8;
+    uint16_t targetRegoY = (opcode & 0x00F0) >> 4;
+
+    if (registers[targetRegoX] != registers[targetRegoY]) {
+        pc += 2;
+    }
 }
-void chip8::OxANNN() {
-    
+
+void Chip8::OxANNN() {
+    uint16_t address = opcode & 0x0FFF;
+    indexRego = address;
 }
-void chip8::OxBNNN() {
-    
+
+void Chip8::OxBNNN() {
+    uint16_t address = opcode & 0x0FFF;
+    pc = address + registers[0];
 }
-void chip8::OxCXKK() {
-    
+
+void Chip8::OxCXKK() {
+    uint16_t targetRego = (opcode & 0x0F00) >> 8;
+    uint16_t targetValue = (opcode & 0x00FF);
+
+    registers[targetRego] = giveRandInt() & targetValue;
 }
-void chip8::OxDXYN() {
-    
+
+void Chip8::OxDXYN() {
+    uint16_t targetRegoX = opcode & 0x0F00;
+    uint16_t targetRegoY = opcode & 0x00F0;
+    // since each byte represents 8 bits and each column of data
+    // will be in 8 bits, we can assert that the total height of 
+    // the item to print will be numBytes and the width will be 8
+    uint16_t numBytes = opcode & 0x000F;
+
+    // Only starting pos should wrap about display, not overflowing
+    // sprites
+    uint8_t startX = registers[targetRegoX] % MAXWIDTH;
+    uint8_t startY = registers[targetRegoY] % MAXHEIGHT;
+
+    for (uint row = 0; row < numBytes; row++) {
+        // Graphics for sprites are loaded by 8 bit rows starting from
+        // the address stored at the index register
+        uint8_t currentRow = memory[indexRego + row];
+        for (uint col = 0; col < 8; col++) {
+            uint32_t* currentDisplayPixel = &display[(startX+col) + MAXWIDTH*(startY+row)];
+            if (currentRow & (0x8000 >> (MAXWIDTH-col))) {
+                // Set the flag variable in the event that any pixels are erased
+                if (*currentDisplayPixel == 0xFFFFFFFF) {
+                    registers[FLAGREGO] = 1;
+                } else {
+                    registers[FLAGREGO] = 0;
+                }
+                *currentDisplayPixel = *currentDisplayPixel ^ 0xFFFFFFFF;
+            } else if (*currentDisplayPixel == 0) {
+                registers[FLAGREGO] = 0;
+            }
+        }
+    } 
 }
-void chip8::OxEX9E() {
-    
+
+void Chip8::OxEX9E() {
+
 }
-void chip8::OxEXA1() {
-    
+
+void Chip8::OxEXA1() {
+
 }
-void chip8::OxFX07() {
-    
+
+void Chip8::OxFX07() {
+
 }
-void chip8::OxFX0A() {
-    
+
+void Chip8::OxFX0A() {
+
 }
-void chip8::OxFX15() {
-    
+
+void Chip8::OxFX15() {
+
 }
-void chip8::OxFX18() {
-    
+
+void Chip8::OxFX18() {
+
 }
-void chip8::OxFX1E() {
-    
+
+void Chip8::OxFX1E() {
+
 }
-void chip8::OxFX29() {
-    
+
+void Chip8::OxFX29() {
+
 }
-void chip8::OxFX33() {
-    
+
+void Chip8::OxFX33() {
+
 }
-void chip8::OxFX55() {
-    
+
+void Chip8::OxFX55() {
+
 }
-void chip8::OxFX65() {
-    
+
+void Chip8::OxFX65() {
+
 }

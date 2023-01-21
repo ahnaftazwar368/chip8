@@ -4,13 +4,16 @@
 #ifndef CHIP8_H
 #define CHIP8_H
 
+// Special memory addresses
 const uint FONTSTART {0x050};
 const uint FONTEND {0x0A0};
 const uint ROMSTART {0x200};
-const uint FLAGREGISTER {15};
+const uint FLAGREGO {15};
 
+const uint MAXHEIGHT {64};
+const uint MAXWIDTH {32};
 
-class chip8 {
+class Chip8 {
 public:
     // member vars
     uint16_t opcode{};
@@ -23,14 +26,15 @@ public:
     uint8_t sp {};
     uint8_t delayTimer {};
     uint8_t soundTimer {};
-    uint32_t display[64 * 32] {};
+    uint32_t display[64 * 32] {}; // best practise for buffer display to be 1d for quicker access
     // member functions
     void loadRom(const char* romFile);
     int giveRandInt();
     // constructors
-    chip8();
+    Chip8();
     // Opcodes
     void Ox00E0();
+    void Ox00EE();
     void Ox1NNN();
     void Ox2NNN();
     void Ox3XKK();
@@ -63,7 +67,7 @@ public:
     void OxFX33();
     void OxFX55();
     void OxFX65();
-}
+};
 
 
 #endif
