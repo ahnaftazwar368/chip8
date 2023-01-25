@@ -236,8 +236,8 @@ void Chip8::OxCXKK() {
 }
 
 void Chip8::OxDXYN() {
-    uint16_t targetRegoX = opcode & 0x0F00;
-    uint16_t targetRegoY = opcode & 0x00F0;
+    uint16_t targetRegoX = opcode & 0x0F00 >> 8;
+    uint16_t targetRegoY = opcode & 0x00F0 >> 4;
     // since each byte represents 8 bits and each column of data
     // will be in 8 bits, we can assert that the total height of 
     // the item to print will be numBytes and the width will be 8
@@ -270,45 +270,89 @@ void Chip8::OxDXYN() {
 }
 
 void Chip8::OxEX9E() {
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
+    uint8_t targetKey = registers[targetRego];
 
+    if (keyboard[targetKey] == 1) {
+        pc += 2;
+    }
 }
 
 void Chip8::OxEXA1() {
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
+    uint8_t targetKey = registers[targetRego];
 
+    if (keyboard[targetKey] != 1) {
+        pc += 2;
+    }
 }
 
 void Chip8::OxFX07() {
-
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
+    
+    registers[targetRego] = delayTimer;
 }
 
 void Chip8::OxFX0A() {
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
 
+    // check if any keys have been pressed on each cycle of fetch/ execute
+    int i {};
+    for (i = 0; i < 16; i++) {
+        if (keyboard[i] == 1) {
+            registers[targetRego] = i;
+            break;
+        }
+    }
+    // repeat if no keypress by decrementing pc back to this instruction
+    if (i == 16) pc -= 2;
 }
 
 void Chip8::OxFX15() {
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
 
+    delayTimer = registers[targetRego]
 }
 
 void Chip8::OxFX18() {
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
 
+    soundTimer = registers[targetRego]
 }
 
 void Chip8::OxFX1E() {
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
 
+    indexRego += registers[targetRego];
 }
 
 void Chip8::OxFX29() {
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
 
+    // each sprite is saved as 8 bit lines with a height of 5 bytes
+    indexRego = FONTSTART + 5 * registers[targetRego];
 }
 
 void Chip8::OxFX33() {
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
 
+    memory[indexRego] = registers[targetRego] / 100;
+    memory[indexRego + 1] =  (registers[targetRego] % 100) / 10;
+    memory[indexRego + 2] = (registers[targetRego] % 10);
 }
 
 void Chip8::OxFX55() {
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
 
+    for (auto i = 0; i <= targetRego; i++) {
+        memory[indexRego + i] = registers[i];
+    }
 }
 
 void Chip8::OxFX65() {
+    uint16_t targetRego = opcode & 0x0F00 >> 8;
 
+    for (auto i = 0; i <= targetRego; i++) {
+        registers[i] = memory[indexRego + i];
+    }
 }
