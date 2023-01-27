@@ -30,6 +30,7 @@ public:
     // member functions
     void loadRom(const char* romFile);
     int giveRandInt();
+    void cycle();
     // constructors
     Chip8();
     // Opcodes
@@ -67,6 +68,7 @@ public:
     void OxFX33();
     void OxFX55();
     void OxFX65();
+    void invalidOp();
 };
 
 

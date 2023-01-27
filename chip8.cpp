@@ -8,6 +8,8 @@
 Chip8::Chip8() {
     pc = ROMSTART;
     sp = 0;
+    indexRego = 0;
+    opcode = 0;
     uint8_t fontset[80] ={
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -60,6 +62,14 @@ void Chip8::loadRom(const char* romFile) {
 int Chip8::giveRandInt() {
     std::srand((unsigned) time(NULL));
     return rand() % 256;
+}
+
+Chip8::cycle() {
+    // fetch
+    opcode = (memory[pc] << 8) | memory[pc+1];
+    pc += 2;
+    // decode 
+    
 }
 
 // All Opcodes
@@ -311,13 +321,13 @@ void Chip8::OxFX0A() {
 void Chip8::OxFX15() {
     uint16_t targetRego = opcode & 0x0F00 >> 8;
 
-    delayTimer = registers[targetRego]
+    delayTimer = registers[targetRego];
 }
 
 void Chip8::OxFX18() {
     uint16_t targetRego = opcode & 0x0F00 >> 8;
 
-    soundTimer = registers[targetRego]
+    soundTimer = registers[targetRego];
 }
 
 void Chip8::OxFX1E() {
@@ -355,4 +365,8 @@ void Chip8::OxFX65() {
     for (auto i = 0; i <= targetRego; i++) {
         registers[i] = memory[indexRego + i];
     }
+}
+
+void Chip8::invalidOp() {
+    // do nothing if invalid op
 }

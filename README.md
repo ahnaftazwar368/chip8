@@ -10,6 +10,7 @@ system would function.
 -http://learnwebgl.brown37.net/rendering/buffer_object_primer.html
 -https://gamedev.stackexchange.com/questions/75661/java-single-array-best-choice-for-accessing-pixels-for-manipulation
 -https://multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/
+-https://multigesture.net/wp-content/uploads/mirror/zenogais/FunctionPointers.htm
 -https://en.wikipedia.org/wiki/CHIP-8#CHIP-8_extensions_and_variations
 -https://tobiasvl.github.io/blog/write-a-chip-8-emulator/
 ### Calculators
