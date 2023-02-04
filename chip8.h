@@ -15,24 +15,12 @@ const uint MAXWIDTH {32};
 
 class Chip8 {
 public:
-    // member vars
-    uint16_t opcode{};
-    uint8_t keyboard[16]{};
-    uint8_t registers[16] {};
-    uint8_t memory[4096] {};
-    uint16_t indexRego {};
-    uint16_t pc {};
-    uint16_t stack[16] {};
-    uint8_t sp {};
-    uint8_t delayTimer {};
-    uint8_t soundTimer {};
-    uint32_t display[64 * 32] {}; // best practise for buffer display to be 1d for quicker access
+    // constructors
+    Chip8();
     // member functions
     void loadRom(const char* romFile);
     int giveRandInt();
     void cycle();
-    // constructors
-    Chip8();
     // Opcodes
     void Ox00E0();
     void Ox00EE();
@@ -69,6 +57,19 @@ public:
     void OxFX55();
     void OxFX65();
     void invalidOp();
+// member vars
+public:
+    uint16_t opcode{};
+    uint8_t keyboard[16]{};
+    uint8_t registers[16] {};
+    uint8_t memory[4096] {};
+    uint16_t indexRego {};
+    uint16_t pc {};
+    uint16_t stack[16] {};
+    uint8_t sp {};
+    uint8_t delayTimer {};
+    uint8_t soundTimer {};
+    uint32_t display[64 * 32] {}; // best practise for buffer display to be 1d for quicker access
 };
 
 

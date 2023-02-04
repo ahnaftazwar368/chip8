@@ -64,12 +64,152 @@ int Chip8::giveRandInt() {
     return rand() % 256;
 }
 
-Chip8::cycle() {
+void Chip8::cycle() {
     // fetch
     opcode = (memory[pc] << 8) | memory[pc+1];
     pc += 2;
     // decode 
-    
+    switch (opcode & 0xF000) {
+        case 0x0000:
+            switch (opcode & 0x000F) {
+                case 0x0000:
+                    Chip8::Ox00E0();
+                    break;
+                case 0x000E:
+                    Chip8::Ox00EE();
+                    break;
+
+                default:
+                    std::cerr << "OpCode error, program crashed!";
+            }
+            break;
+        case 0x1000:
+            Chip8::Ox1NNN();
+            break;
+        case 0x2000:
+            Chip8::Ox2NNN();
+            break;
+        case 0x3000:
+            Chip8::Ox3XKK();
+            break;
+        case 0x4000:
+            Chip8::Ox4XKK();
+        case 0x5000:
+            Chip8::Ox5XY0();
+            break;
+        case 0x6000:
+            Chip8::Ox6XKK();
+            break;
+        case 0x7000:
+            Chip8::Ox7XKK();
+            break;
+        case 0x9000:
+            Chip8::Ox9XY0();
+            break;
+        case 0xA000:
+            Chip8::OxANNN();
+            break;
+        case 0xB000:
+            Chip8::OxBNNN();
+            break;
+        case 0xC000:
+            Chip8::OxCXKK();
+            break;
+        case 0xD000:
+            Chip8::OxDXYN();
+            break;
+        case 0x8000:
+            switch (opcode & 0x000F) {
+                case 0x0000:
+                    Chip8::Ox8XY0();
+                    break;
+                case 0x0001:
+                    Chip8::Ox8XY1();
+                    break;
+                case 0x0002:
+                    Chip8::Ox8XY2();
+                    break;
+                case 0x0003:
+                    Chip8::Ox8XY3();
+                    break;
+                case 0x0004:
+                    Chip8::Ox8XY4();
+                    break;
+                case 0x0005:
+                    Chip8::Ox8XY5();
+                    break;
+                case 0x0006:
+                    Chip8::Ox8XY6();
+                    break;
+                case 0x0007:
+                    Chip8::Ox8XY7();
+                    break;
+                case 0x000E:
+                    Chip8::Ox8XYE();
+                    break;
+                
+                default:
+                    std::cerr << "OpCode error, program crashed!";
+                }
+            break;
+        case 0xE000:
+            switch (opcode & 0x00FF) {
+                case 0x00A1:
+                    Chip8::OxEXA1();
+                    break;
+                case 0x009E:
+                    Chip8::OxEX9E();
+                    break;
+
+                default:
+                    std::cerr << "OpCode error, program crashed!";
+                }
+            break;
+        case 0xF000:
+            switch (opcode & 0x00FF) {
+                case 0x0007:
+                    Chip8::OxFX07();
+                    break;
+                case 0x000A:
+                    Chip8::OxFX0A();
+                    break;
+                case 0x0015:
+                    Chip8::OxFX15();
+                    break;
+                case 0x0018:
+                    Chip8::OxFX18();
+                    break;
+                case 0x001E:
+                    Chip8::OxFX1E();
+                    break;
+                case 0x0029:
+                    Chip8::OxFX29();
+                    break;
+                case 0x0033:
+                    Chip8::OxFX33();
+                    break;
+                case 0x0055:
+                    Chip8::OxFX55();
+                    break;
+                case 0x0065:
+                    Chip8::OxFX65();
+                    break;
+
+                default:
+                    break;
+                }
+            break;
+        default:
+            std::cerr << "OpCode error, program crashed!";
+    }
+
+    if (delayTimer > 0) {
+        delayTimer--;
+    }
+
+    if (soundTimer > 0) {
+        soundTimer--;
+    }
 }
 
 // All Opcodes
