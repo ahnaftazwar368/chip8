@@ -48,68 +48,121 @@ void Graphics::updateGraphics(void *pixels) {
 
 bool Graphics::handleInput(uint8_t* keyboard) {
     bool quit = false;
-    while (!quit) {
-        while (SDL_PollEvent(&event) != 0) {
-            if (event.type == SDL_QUIT) {
-                quit = true;
-                break;
-            } else if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
-                    case SDLK_1:
-                        keyboard[0] = 1;
-                        std::cout << "Button Press!" << std::endl;
-                        break;
-                    case SDLK_2:
-                        keyboard[1] = 1;
-                        break;
-                    case SDLK_3:
-                        keyboard[2] = 1;
-                        break;
-                    case SDLK_4:
-                        keyboard[3] = 1;
-                        break;
-                    case SDLK_q:
-                        keyboard[4] = 1;
-                        break;
-                    case SDLK_w:
-                        keyboard[5] = 1;
-                        break;
-                    case SDLK_e:
-                        keyboard[6] = 1;
-                        break;
-                    case SDLK_r:
-                        keyboard[7] = 1;
-                        break;
-                    case SDLK_a:
-                        keyboard[8] = 1;
-                        break;
-                    case SDLK_s:
-                        keyboard[9] = 1;
-                        break;
-                    case SDLK_d:
-                        keyboard[10] = 1;
-                        break;
-                    case SDLK_f:
-                        keyboard[11] = 1;
-                        break;
-                    case SDLK_z:
-                        keyboard[12] = 1;
-                        break;
-                    case SDLK_x:
-                        keyboard[13] = 1;
-                        break;
-                    case SDLK_c:
-                        keyboard[14] = 1;
-                        break;
-                    case SDLK_v:
-                        keyboard[15] = 1;
-                        break;
-                    default:
-                        continue;
-                        break;
-                }
+    while (SDL_PollEvent(&event) != 0) {
+        if (event.type == SDL_QUIT) {
+            quit = true;
+            break;
+        } else if (event.type == SDL_KEYDOWN) {
+            switch (event.key.keysym.sym) {
+                case SDLK_1:
+                    keyboard[0] = 1;
+                    std::cout << "Button Press!" << std::endl;
+                    break;
+                case SDLK_2:
+                    keyboard[1] = 1;
+                    break;
+                case SDLK_3:
+                    keyboard[2] = 1;
+                    break;
+                case SDLK_4:
+                    keyboard[3] = 1;
+                    break;
+                case SDLK_q:
+                    keyboard[4] = 1;
+                    break;
+                case SDLK_w:
+                    keyboard[5] = 1;
+                    break;
+                case SDLK_e:
+                    keyboard[6] = 1;
+                    break;
+                case SDLK_r:
+                    keyboard[7] = 1;
+                    break;
+                case SDLK_a:
+                    keyboard[8] = 1;
+                    break;
+                case SDLK_s:
+                    keyboard[9] = 1;
+                    break;
+                case SDLK_d:
+                    keyboard[10] = 1;
+                    break;
+                case SDLK_f:
+                    keyboard[11] = 1;
+                    break;
+                case SDLK_z:
+                    keyboard[12] = 1;
+                    break;
+                case SDLK_x:
+                    keyboard[13] = 1;
+                    break;
+                case SDLK_c:
+                    keyboard[14] = 1;
+                    break;
+                case SDLK_v:
+                    keyboard[15] = 1;
+                    break;
+                default:
+                    continue;
+                    break;
+            }
+        } else if (event.type == SDL_KEYUP) {
+            switch (event.key.keysym.sym) {
+                case SDLK_1:
+                    keyboard[0] = 0;
+                    std::cout << "Button not press!" << std::endl;
+                    break;
+                case SDLK_2:
+                    keyboard[1] = 0;
+                    break;
+                case SDLK_3:
+                    keyboard[2] = 0;
+                    break;
+                case SDLK_4:
+                    keyboard[3] = 0;
+                    break;
+                case SDLK_q:
+                    keyboard[4] = 0;
+                    break;
+                case SDLK_w:
+                    keyboard[5] = 0;
+                    break;
+                case SDLK_e:
+                    keyboard[6] = 0;
+                    break;
+                case SDLK_r:
+                    keyboard[7] = 0;
+                    break;
+                case SDLK_a:
+                    keyboard[8] = 0;
+                    break;
+                case SDLK_s:
+                    keyboard[9] = 0;
+                    break;
+                case SDLK_d:
+                    keyboard[10] = 0;
+                    break;
+                case SDLK_f:
+                    keyboard[11] = 0;
+                    break;
+                case SDLK_z:
+                    keyboard[12] = 0;
+                    break;
+                case SDLK_x:
+                    keyboard[13] = 0;
+                    break;
+                case SDLK_c:
+                    keyboard[14] = 0;
+                    break;
+                case SDLK_v:
+                    keyboard[15] = 0;
+                    break;
+                default:
+                    continue;
+                    break;
             }
         }
     }
-    return (quit == true);
+    return quit;
 }

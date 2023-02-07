@@ -12,7 +12,6 @@ public:
     // member funcs
     void updateGraphics(void *pixels);
     bool handleInput(uint8_t *keyboard);
-    int currentKeyDown;
 private:
     SDL_Window* window;
     SDL_Event event;

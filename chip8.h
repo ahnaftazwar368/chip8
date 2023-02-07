@@ -5,13 +5,13 @@
 #define CHIP8_H
 
 // Special memory addresses
-const uint FONTSTART {0x050};
-const uint FONTEND {0x0A0};
+const uint FONTSTART {0x50};
+const uint FONTEND {0xA0};
 const uint ROMSTART {0x200};
-const uint FLAGREGO {15};
+const uint FLAGREGO {0xF};
 
-const uint MAXHEIGHT {64};
-const uint MAXWIDTH {32};
+const uint MAXHEIGHT {32};
+const uint MAXWIDTH {64};
 
 class Chip8 {
 public:
@@ -59,6 +59,7 @@ public:
     void invalidOp();
     // member vars
 public:
+    bool keyflag{};
     uint16_t opcode{};
     uint8_t keyboard[16]{};
     uint8_t registers[16] {};
