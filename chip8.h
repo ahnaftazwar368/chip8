@@ -57,7 +57,7 @@ public:
     void OxFX55();
     void OxFX65();
     void invalidOp();
-// member vars
+    // member vars
 public:
     uint16_t opcode{};
     uint8_t keyboard[16]{};

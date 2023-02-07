@@ -8,23 +8,45 @@ Graphics::Graphics(const int width, const int height) {
 
     //Create window
     window = SDL_CreateWindow("Chip-8 Emulator", SDL_WINDOWPOS_UNDEFINED, 
-                            SDL_WINDOWPOS_UNDEFINED,
-                            width, height, SDL_WINDOW_SHOWN);
+        SDL_WINDOWPOS_UNDEFINED,
+        width, height, SDL_WINDOW_SHOWN);
     if(window == NULL)
         std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+
+    // Create renderer
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if(renderer == NULL) 
+        std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+    // SDL_RenderSetLogicalSize(renderer, width, height);
+    
+    // Create texture with little endian formatting
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888,
+        SDL_TEXTUREACCESS_STREAMING, 64, 32);
+    if (texture == NULL)
+        std::cerr << "Texture could not be created! SDL_Error: " << SDL_GetError() << std::endl;
 }
 
 Graphics::~Graphics() {
     std::cout << "Shutting down :(" << std::endl;
 
-    //Destroy window
+    //Destroy SDL items
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-
+    
     //Quit SDL subsystems
     SDL_Quit();
 }
 
-bool Graphics::handleInput(std::vector<int>& keyboard) {
+void Graphics::updateGraphics(void *pixels) {
+    // update texture with new data
+    SDL_UpdateTexture(texture, NULL, pixels, 64 * sizeof(uint32_t));
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderPresent(renderer);    
+}
+
+bool Graphics::handleInput(uint8_t* keyboard) {
     bool quit = false;
     while (!quit) {
         while (SDL_PollEvent(&event) != 0) {
@@ -91,18 +113,3 @@ bool Graphics::handleInput(std::vector<int>& keyboard) {
     }
     return (quit == true);
 }
-
-
-/* Blank window test code    
-    //Get window surface
-    screenSurface = SDL_GetWindowSurface( window );
-
-    //Fill the surface white
-    SDL_FillRect( screenSurface, NULL, SDL_MapRGB( screenSurface->format, 0xFF, 0xFF, 0xFF ) );
-    
-    //Update the surface
-    SDL_UpdateWindowSurface( window );
-
-    //Hack to get window to stay up
-    SDL_Event e; bool quit = false; while( quit == false ){ while( SDL_PollEvent( &e ) ){ if( e.type == SDL_QUIT ) quit = true; } }
-*/

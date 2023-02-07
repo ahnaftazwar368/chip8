@@ -10,11 +10,14 @@ public:
     Graphics(const int width, const int height);
     ~Graphics();
     // member funcs
-    bool handleInput(std::vector<int>& keyboard);
+    void updateGraphics(void *pixels);
+    bool handleInput(uint8_t *keyboard);
     int currentKeyDown;
 private:
     SDL_Window* window;
     SDL_Event event;
+    SDL_Renderer* renderer;
+    SDL_Texture* texture;
 };
 
 #endif

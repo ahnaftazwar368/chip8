@@ -1,12 +1,15 @@
 #include <iostream>
-#include <vector>
+#include <chrono>
+#include <thread>
+
 #include "chip8.h"
 #include "graphics.h"
 
 int main(int argc, char** argv) {
-    // if (argc != 3) {
-    //     std::cerr << "Incorrect args given, usage: " << argv[0] << " <ROM> <Delay> ";
-    // }
+    if (argc != 3) {
+        std::cerr << "Incorrect args given, usage: " << argv[0] << " <ROM> <Delay> " << std::endl;
+        return 0;
+    }
 
     // Begin running graphics
     const int SCREEN_WIDTH = 640;
@@ -17,17 +20,17 @@ int main(int argc, char** argv) {
     // Begin chip8
     Chip8 chip8 {};
 
-    // chip8.loadRom(argv[1]);
+    chip8.loadRom(argv[1]);
 
     bool quit = false;
     std::vector<int> bufferKeyboard (16, 0);
     while (!quit) {
-        quit = graphics.handleInput(bufferKeyboard);
-        for (int i = 0; i < 16; i++) {
-            chip8.keyboard[i] = bufferKeyboard[i];
-        }
-        // chip8.cycle();
-        
+        quit = graphics.handleInput(chip8.keyboard);
+
+        chip8.cycle();
+
+        graphics.updateGraphics(chip8.display);
+        std::this_thread::sleep_for(std::chrono::microseconds(1200));
     }
     return 0;
 }

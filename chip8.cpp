@@ -53,6 +53,8 @@ void Chip8::loadRom(const char* romFile) {
         for (int i = 0; i < fileSize; i++) {
             Chip8::memory[ROMSTART + i] = buffer[i];
         }
+    } else {
+        std::cerr << "men are my preference" << std::endl;
     }
 
     delete[] buffer;
