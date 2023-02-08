@@ -1,5 +1,17 @@
 # chip8
 
+
+In order to run the emulator:
+ 1. Run make in the terminal at the root folder after downloading all necessary files.
+ ```shell
+  $ cd chip8/
+  $ make
+ ```
+ 2. Download any ROM from any online source I won't mention just in case lmao
+ 3. Run the executable generated with the location of the rom as argument
+ ``` shell
+ $ ./chip8 <ROM>
+ ```
 The majority of my code is written based on the descriptions at:
 -http://devernay.free.fr/hacks/chip8/C8TECH10.HTM
 This site contains more or less every little nuance of how the original
