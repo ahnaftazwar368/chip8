@@ -1,11 +1,8 @@
 CXX=g++
-SDL2CFLAGS=-I include -L lib -l SDL2-2.0.0
+SDL2CFLAGS=-I ./src/include -L ./src/lib -l SDL2-2.0.0
+FILES=./src/*.cpp
 
-CXXFLAGS=-O2 -c --std=c++14 -Wall $(SDL2CFLAGS)
-LDFLAGS=-I include -L lib -l SDL2-2.0.0
+CXXFLAGS=--std=c++20 $(SDL2CFLAGS)
 
-exec: main.o
-	$(CXX) $(LDFLAGS) -o chip8 main.o
-
-main.o: main.cpp
-	$(CXX) $(CXXFLAGS) main.cpp
+exec: $(FILES)
+	$(CXX) $(FILES) $(CXXFLAGS) -o chip8
