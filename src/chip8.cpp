@@ -53,7 +53,7 @@ void Chip8::loadRom(const char* romFile) {
             memory[ROMSTART + i] = buffer[i];
         }
     } else {
-        std::cerr << "men are my preference" << std::endl;
+        std::cerr << "ROM load failed :(" << std::endl;
         std::exit(EXIT_FAILURE);
     }
 
